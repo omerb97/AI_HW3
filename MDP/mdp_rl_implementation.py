@@ -21,9 +21,6 @@ def Bellman_Eq_Calc(mdp, i, j, U):
     bellmanEq = mdp.board[i,j] + mdp.gamma * maxUtility
     return (maxAction,bellmanEq)
 
-def Q_Learning_Eq_Calc(mdp, learningRate, qTable, state, action, nextState):
-    for (action)
-
 
 def value_iteration(mdp, U_init, epsilon=10 ** (-3)):
     # TODO:

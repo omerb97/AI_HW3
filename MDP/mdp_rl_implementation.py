@@ -3,22 +3,29 @@ import random
 import numpy as np
 import math
 
+def Index2State(idx, num_row):
+    row = idx//num_row
+    col = idx % num_row
+    return (row, col)
+
+def State2Index(row,col, num_row):
+    return row*num_row+col
 
 num2action = {0: "UP", 
                 1: "DOWN",
                 2: "RIGHT",
                 3: "LEFT"}
-def Bellman_Eq_Calc(mdp, i, j, U):
+def Bellman_Eq_Calc(mdp, i, j, Uregular):
     maxUtility = -math.inf
     maxAction = ""
     for (action, prob) in mdp.transition_function.items():
-        for i in range(4):
+        for k in range(4):
             nextState = mdp.step((i,j), action)
-            temp = prob[i]*U[nextState[0],nextState[1]]
+            temp = prob[k]*Uregular[nextState[0]][nextState[1]]
             if temp > maxUtility:
                 maxUtility = temp
                 maxAction = action
-    bellmanEq = mdp.board[i,j] + mdp.gamma * maxUtility
+    bellmanEq = float(mdp.board[i][j]) + mdp.gamma * maxUtility
     return (maxAction,bellmanEq)
 
 
@@ -31,28 +38,33 @@ def value_iteration(mdp, U_init, epsilon=10 ** (-3)):
     #
 
     # ====== YOUR CODE: ======
-    U = U_init
+    Uregular = U_init
     Uprime = U_init
     delta = 0
     #do
-    U = Uprime
+    Uregular = Uprime
     delta = 0
-    states = mdp
     for i in range(mdp.num_row):
         for j in range(mdp.num_col):
-            U_prime[i][j] = Bellman_Eq_Calc(mdp, i, j, U)[1]
-            if abs(Uprime[i][j] - U[i][j]) > delta:
-                delta = abs(Uprime[i][j] - U[i][j])
+            if mdp.board[i][j] == "WALL":
+                continue
+            Uprime[i][j] = Bellman_Eq_Calc(mdp, i, j, Uregular)[1]
+            if abs(Uprime[i][j] - Uregular[i][j]) > delta:
+                delta = abs(Uprime[i][j] - Uregular[i][j])
+            print(abs(Uprime[i][j] - Uregular[i][j]))
     while delta > epsilon*(1-mdp.gamma)/mdp.gamma:
-        U = Uprime
+        print("ehlloo")
+        mdp.print_utility(Uregular)
+        Uregular = Uprime
         delta = 0
-        states = mdp
         for i in range(mdp.num_row):
             for j in range(mdp.num_col):
-                Uprime[i][j] = one_state_mdp(mdp, i, j, U)[1]
-                if abs(Uprime[i][j] - U[i][j]) > delta:
-                    delta = abs(Uprime[i][j] - U[i][j])
-    return U
+                if mdp.board[i][j] == "WALL":
+                    continue
+                Uprime[i,j] = Bellman_Eq_Calc(mdp, i, j, Uregular)[1]
+                if abs(Uprime[i][j] - Uregular[i][j]) > delta:
+                    delta = abs(Uprime[i][j] - Uregular[i][j])
+    return Uregular
     # ========================
 
 
@@ -63,9 +75,11 @@ def get_policy(mdp, U):
     #
 
     # ====== YOUR CODE: ======
-    Upolicy = np.zeros(mdp.num_row, mdp.num_col)
+    Upolicy = np.zeros((mdp.num_row, mdp.num_col), dtype=str)
     for i in range(mdp.num_row):
         for j in range(mdp.num_col):
+            if mdp.board[i][j] == "WALL":
+                continue
             Upolicy[i,j] = Bellman_Eq_Calc(mdp, i, j, U)[0]
     return Upolicy
     # ========================
@@ -87,7 +101,7 @@ def q_learning(mdp, init_state, total_episodes=10000, max_steps=999, learning_ra
     #
 
     # ====== YOUR CODE: ======
-    qTable = np.zeros(mdp.num_row, mdp.num_col, len(mdp.transion_function.keys()))
+    qTable = np.zeros((mdp.num_row * mdp.num_col, len(mdp.transition_function.keys())))
     for episode in range(total_episodes):
         state = init_state
         step = 0
@@ -97,20 +111,20 @@ def q_learning(mdp, init_state, total_episodes=10000, max_steps=999, learning_ra
             tradeoff = random.uniform(0,1)
 
             if tradeoff >epsilon:
-                actionIdx = np.argmax(qTable[state[0],state[1],:])
+                actionIdx = np.argmax(qTable[State2Index(state[0], state[1], mdp.num_row),:])
                 action = num2action[actionIdx]
             else:
-                actionIdx = random(0,4)
+                actionIdx = random.randint(0,3)
                 action = num2action[actionIdx]
 
             newState = mdp.step(state, action)
-            qTable[state[0], state[1], actionIdx] = qTable[state[0], state[1], actionIdx] + learning_rate * (mdp.board[state[0],state[1]] + mdp.gamma * np.max(qTable[newState[0],newState[1],:]) - qTable[state[0], state[1], actionIdx])
+            qTable[State2Index(state[0], state[1], mdp.num_row), actionIdx] = qTable[State2Index(state[0], state[1], mdp.num_row), actionIdx] + learning_rate * (float(mdp.board[state[0]][state[1]]) + mdp.gamma * np.max(qTable[State2Index(state[0], state[1], mdp.num_row),:]) - qTable[State2Index(state[0], state[1], mdp.num_row), actionIdx])
 
             state = newState
             if state in mdp.terminal_states:
                 break
         epsilon = min_epsilon + (max_epsilon - min_epsilon) * np.exp(-decay_rate*episode)
-    
+    return qTable
     # ========================
 
 
@@ -121,10 +135,10 @@ def q_table_policy_extraction(mdp, qtable):
     #
 
     # ====== YOUR CODE: ======
-    Qpolicy = np.zeros(mdp.num_row, mdp.num_col)
+    Qpolicy = np.zeros((mdp.num_row, mdp.num_col), dtype=str)
     for i in range(mdp.num_row):
         for j in range(mdp.num_col):
-            Qpolicy[i,j] = num2action[np.argmax(qtable[i,j,:])]
+            Qpolicy[i,j] = num2action[np.argmax(qtable[State2Index(i,j,mdp.num_row),:])]
     return Qpolicy 
     # ========================
 

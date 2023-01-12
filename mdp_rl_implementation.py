@@ -2,6 +2,7 @@ from copy import deepcopy
 import random
 import numpy as np
 import math
+import copy
 
 def Index2State(idx, num_row):
     row = idx//num_row
@@ -16,6 +17,8 @@ num2action = {0: "UP",
                 2: "RIGHT",
                 3: "LEFT"}
 def Bellman_Eq_Calc(mdp, i, j, Uregular):
+    if (i,j) in mdp.terminal_states:
+        return ("", float(mdp.board[i][j]))
     maxUtility = -math.inf
     maxAction = ""
     for (action, prob) in mdp.transition_function.items():
@@ -39,8 +42,8 @@ def value_iteration(mdp, U_init, epsilon=10 ** (-3)):
     #
 
     # ====== YOUR CODE: ======
-    Uregular = U_init
-    Uprime = U_init
+    Uregular = copy.deepcopy(U_init)
+    Uprime = copy.deepcopy(U_init)
     delta = 0
     #do
     for i in range(mdp.num_row):
@@ -50,17 +53,14 @@ def value_iteration(mdp, U_init, epsilon=10 ** (-3)):
             Uprime[i][j] = Bellman_Eq_Calc(mdp, i, j, Uregular)[1]
             if abs(Uprime[i][j] - Uregular[i][j]) > delta:
                 delta = abs(Uprime[i][j] - Uregular[i][j])
-            print(abs(Uprime[i][j] - Uregular[i][j]))
     while delta >= epsilon*(1-mdp.gamma)/mdp.gamma:
-        print("ehlloo")
-        mdp.print_utility(Uregular)
-        Uregular = Uprime
+        Uregular = copy.deepcopy(Uprime)
         delta = 0
         for i in range(mdp.num_row):
             for j in range(mdp.num_col):
                 if mdp.board[i][j] == "WALL":
                     continue
-                Uprime[i,j] = Bellman_Eq_Calc(mdp, i, j, Uregular)[1]
+                Uprime[i][j] = Bellman_Eq_Calc(mdp, i, j, Uregular)[1]
                 if abs(Uprime[i][j] - Uregular[i][j]) > delta:
                     delta = abs(Uprime[i][j] - Uregular[i][j])
     return Uregular

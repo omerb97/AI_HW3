@@ -100,28 +100,27 @@ def q_learning(mdp, init_state, total_episodes=10000, max_steps=999, learning_ra
     #
 
     # ====== YOUR CODE: ======
+    actionList = ["UP", "DOWN", "RIGHT", "LEFT"]
     qTable = np.zeros((mdp.num_row * mdp.num_col, len(mdp.transition_function.keys())))
     for episode in range(total_episodes):
         state = init_state
-        step = 0
-        done = False
-
         for step in range(max_steps):
+            if state in mdp.terminal_states:
+                continue
             tradeoff = random.uniform(0,1)
-
+            actionIdx = 0
             if tradeoff >epsilon:
+                print("1")
                 actionIdx = np.argmax(qTable[State2Index(state[0], state[1], mdp.num_row),:])
-                action = num2action[actionIdx]
             else:
+                print("2")
                 actionIdx = random.randint(0,3)
-                action = num2action[actionIdx]
-
-            newState = mdp.step(state, action)
-            qTable[State2Index(state[0], state[1], mdp.num_row), actionIdx] = qTable[State2Index(state[0], state[1], mdp.num_row), actionIdx] + learning_rate * (float(mdp.board[state[0]][state[1]]) + mdp.gamma * np.max(qTable[State2Index(state[0], state[1], mdp.num_row),:]) - qTable[State2Index(state[0], state[1], mdp.num_row), actionIdx])
+            # print(num2action[actionIdx])
+            randomAction = random.choices(actionList , weights = tuple(mdp.transition_function[num2action[actionIdx]]))
+            newState = mdp.step(state, randomAction[0])
+            qTable[State2Index(state[0], state[1], mdp.num_row), actionIdx] = qTable[State2Index(state[0], state[1], mdp.num_row), actionIdx] + learning_rate * (float(mdp.board[state[0]][state[1]]) + mdp.gamma * np.max(qTable[State2Index(newState[0], newState[1], mdp.num_row),:]) - qTable[State2Index(state[0], state[1], mdp.num_row), actionIdx])
 
             state = newState
-            if state in mdp.terminal_states:
-                break
         epsilon = min_epsilon + (max_epsilon - min_epsilon) * np.exp(-decay_rate*episode)
     return qTable
     # ========================

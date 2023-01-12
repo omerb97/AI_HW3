@@ -117,7 +117,7 @@ def q_learning(mdp, init_state, total_episodes=10000, max_steps=999, learning_ra
             # print(num2action[actionIdx])
             randomAction = random.choices(actionList , weights = (mdp.transition_function[num2action[actionIdx]]))
             newState = mdp.step(state, randomAction[0])
-            temporalDiff = (float(mdp.board[state[0]][state[1]]) + mdp.gamma * np.max(qTable[State2Index(newState[0], newState[1], mdp.num_row),:]) - qTable[State2Index(state[0], state[1], mdp.num_row), actionIdx])
+            temporalDiff = (float(mdp.board[newState[0]][newState[1]]) + mdp.gamma * np.max(qTable[State2Index(newState[0], newState[1], mdp.num_row),:]) - qTable[State2Index(state[0], state[1], mdp.num_row), actionIdx])
             qTable[State2Index(state[0], state[1], mdp.num_row), actionIdx] += learning_rate * temporalDiff
             state = newState
             if state in mdp.terminal_states:

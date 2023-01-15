@@ -74,7 +74,7 @@ def get_policy(mdp, U):
     #
 
     # ====== YOUR CODE: ======
-    Upolicy = np.zeros((mdp.num_row, mdp.num_col), dtype=str)
+    Upolicy = np.full((mdp.num_row, mdp.num_col), "Initial")
     for i in range(mdp.num_row):
         for j in range(mdp.num_col):
             if mdp.board[i][j] == "WALL":
@@ -134,7 +134,7 @@ def q_table_policy_extraction(mdp, qtable):
     #
 
     # ====== YOUR CODE: ======
-    Qpolicy = np.zeros((mdp.num_row, mdp.num_col), dtype=str)
+    Qpolicy = np.full((mdp.num_row, mdp.num_col), "Initial")
     for i in range(mdp.num_row):
         for j in range(mdp.num_col):
             Qpolicy[i,j] = num2action[np.argmax(qtable[State2Index(i,j,mdp.num_row),:])]

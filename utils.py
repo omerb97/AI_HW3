@@ -63,7 +63,7 @@ def l2_dist(x1: np.array, x2: np.array):
     dists = None
 
     # ====== YOUR CODE: ======
-    raise NotImplementedError
+    dists = np.linalg.norm(x1 - x2)
     # ========================
 
     return dists

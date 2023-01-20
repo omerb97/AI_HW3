@@ -14,7 +14,7 @@ from sklearn.model_selection import KFold
 ========================================================================
 """
 
-ID = 123456789  # TODO: change it to your personal ID
+ID = 208548834  # TODO: change it to your personal ID
 random_gen = RandomState(seed=ID)
 print_formatted_values = False
 
@@ -38,7 +38,10 @@ def accuracy(y: np.array, y_pred: np.array):
     assert y.ndim == 1
 
     # ====== YOUR CODE: ======
-    raise NotImplementedError
+    xor = np.logical_xor(y,y_pred)
+    xnor = np.logical_not(xor)
+    xnorSum = np.sum(xnor)
+    return (xnorSum/len(y))
     # ========================
 
     return accuracy_val

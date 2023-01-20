@@ -25,6 +25,7 @@ class Test(unittest.TestCase):
         mat2 = np.array([[0, 0, 0]])  # (N2, D) = (1, 3)
 
         l2_dist_result = l2_dist(mat1, mat2)
+        #print(l2_dist_result)
         self.assertTrue(np.array_equal(l2_dist_result, np.sqrt([[3], [12]])))
         print('Success')
 

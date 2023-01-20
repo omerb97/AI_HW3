@@ -61,9 +61,12 @@ def l2_dist(x1: np.array, x2: np.array):
     #  Note: Use only basic numpy operations, no external code.
 
     dists = None
-
     # ====== YOUR CODE: ======
-    dists = np.linalg.norm(x1 - x2)
+    dists = np.empty([len(x1),len(x2)])
+    print(dists)
+    for i in range(len(x1)):
+        for j in range(len(x2)):
+            dists[i,j] = (np.linalg.norm(x1[i] - x2[j])) 
     # ========================
 
     return dists

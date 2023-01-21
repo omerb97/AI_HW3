@@ -158,7 +158,14 @@ class ID3:
         true_branch, false_branch = None, None
 
         # ====== YOUR CODE: ======
-        raise NotImplementedError
+        if np.logical_and(labels) == 1 or np.logical_or(labels) == 0:
+            pass
+            # Todo: return leaf or decision node
+        temp = self.find_best_split(rows, labels)
+        best_question = temp[1]
+        true_branch = self.build_tree(temp[2], temp[3])
+        false_branch = self.build_tree(temp[4], temp[5])
+
         # ========================
 
         return DecisionNode(best_question, true_branch, false_branch)
@@ -172,7 +179,7 @@ class ID3:
         # TODO: Build the tree that fits the input data and save the root to self.tree_root
 
         # ====== YOUR CODE: ======
-        raise NotImplementedError
+        self.tree_root = self.build_tree(x_train, y_train)
         # ========================
 
     def predict_sample(self, row, node: DecisionNode or Leaf = None):

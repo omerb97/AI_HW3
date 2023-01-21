@@ -88,7 +88,14 @@ class ID3:
         assert len(rows) == len(labels), 'Rows size should be equal to labels size.'
 
         # ====== YOUR CODE: ======
-        raise NotImplementedError
+        for idx, item in enumerate(rows):
+            if question.match(item):
+                true_rows.append(item)
+                true_labels.append(labels[idx])
+            else:
+                false_rows.append(item)
+                false_labels.append(labels[idx])
+        gain = self.info_gain(true_rows,true_labels,false_rows,false_labels,current_uncertainty)
         # ========================
 
         return gain, true_rows, true_labels, false_rows, false_labels

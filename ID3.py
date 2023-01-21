@@ -117,7 +117,26 @@ class ID3:
         current_uncertainty = self.entropy(rows, labels)
 
         # ====== YOUR CODE: ======
-        raise NotImplementedError
+        for k in range(len(rows[0])):
+            sortedArray = []
+            currentUncertain = self.entropy(rows, labels)
+            for i in rows:
+                sortedArray.append(rows[i,k])
+            sortedArray.sort()
+            splitArr = []
+            for i in range(len(sortedArray)-1):
+                splitArr.append((sortedArray[i]+sortedArray[i+1]) * 0.5)
+            for i in range(len(splitArr)):
+                newQ = Question(None, k, splitArr[i])
+                partitionAns = self.partition(rows,labels,newQ,currentUncertain)
+                infoGain = partitionAns[0]
+                if infoGain > best_gain:
+                    currBestGain = infoGain
+                    best_question = newQ
+                    best_false_rows = partitionAns[3]
+                    best_false_labels = partitionAns[4]
+                    best_true_rows = partitionAns[1]
+                    best_true_labels = partitionAns[2]
         # ========================
 
         return best_gain, best_question, best_true_rows, best_true_labels, best_false_rows, best_false_labels

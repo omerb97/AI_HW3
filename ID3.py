@@ -32,8 +32,12 @@ class ID3:
         impurity = 0.0
 
         # ====== YOUR CODE: ======
-        raise NotImplementedError
+        length = len(rows)
+        for i in counts.keys():
+            inParam = counts[i]/length
+            impurity-= inParam * math.log2(inParam)
         # ========================
+        
 
         return impurity
 
@@ -56,7 +60,12 @@ class ID3:
 
         info_gain_value = 0.0
         # ====== YOUR CODE: ======
-        raise NotImplementedError
+        leftUncertain = self.entropy(left,left_labels)
+        rightUncertain = self.entropy(right,right_labels)
+        leftUncertain = leftUncertain * (len(left)/(len(left)+len(right)))
+        rightUncertain = rightUncertain * (len(right)/(len(left)+len(right)))
+        info_gain_value = current_uncertainty - rightUncertain - leftUncertain
+
         # ========================
 
         return info_gain_value

@@ -123,7 +123,6 @@ class ID3:
         # ====== YOUR CODE: ======
         for k in range(len(rows[0])):
             sortedArray = []
-            currentUncertain = self.entropy(rows, labels)
             for i in range(len(rows)):
                 sortedArray.append(rows[i][k])
             sortedArray.sort()
@@ -132,10 +131,10 @@ class ID3:
                 splitArr.append((sortedArray[i]+sortedArray[i+1]) * 0.5)
             for i in range(len(splitArr)):
                 newQ = Question(None, k, splitArr[i])
-                partitionAns = self.partition(rows,labels,newQ,currentUncertain)
+                partitionAns = self.partition(rows,labels,newQ,current_uncertainty)
                 infoGain = partitionAns[0]
                 if infoGain > best_gain:
-                    currBestGain = infoGain
+                    best_gain = infoGain
                     best_question = newQ
                     best_false_rows = partitionAns[3]
                     best_false_labels = partitionAns[4]
@@ -216,10 +215,10 @@ class ID3:
                 node = node.false_branch
         
         if type(node) is Leaf:
-            if node.predictions["B"] is not None:
+            if "B" in node.predictions.keys():
                 if node.predictions["B"] > 0:
                     prediction = "B"
-            if node.predictions["M"] is not None:
+            if "M" in node.predictions.keys():
                 if node.predictions["M"] > 0:
                     prediction = "M"
         # ========================
@@ -238,6 +237,7 @@ class ID3:
         y_pred = None
 
         # ====== YOUR CODE: ======
+        y_pred = []
         for item in rows:
             y_pred.append(self.predict_sample(item))
         # ========================

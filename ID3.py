@@ -197,7 +197,21 @@ class ID3:
         prediction = None
 
         # ====== YOUR CODE: ======
-        raise NotImplementedError
+
+        while (type(node) is not Leaf):
+            question = node.question
+            if question.match(row):
+                node = node.true_branch
+            else:
+                node = node.false_branch
+        
+        if type(node) is Leaf:
+            if node.predictions["B"] is not None:
+                if node.predictions["B"] > 0:
+                    prediction = "B"
+            if node.predictions["M"] is not None:
+                if node.predictions["M"] > 0:
+                    prediction = "M"
         # ========================
 
         return prediction

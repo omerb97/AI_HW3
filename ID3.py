@@ -214,7 +214,8 @@ class ID3:
         y_pred = None
 
         # ====== YOUR CODE: ======
-        raise NotImplementedError
+        for item in rows:
+            y_pred.append(self.predict_sample(item))
         # ========================
 
         return y_pred

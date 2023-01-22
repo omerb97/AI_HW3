@@ -29,7 +29,14 @@ def basic_experiment(x_train, y_train, x_test, y_test, formatted_print=False):
     acc = None
 
     # ====== YOUR CODE: ======
-    raise NotImplementedError
+    ourTree = ID3()
+    ourTree.build_tree(x_train, y_train)
+    results = ourTree.predict(x_test)
+    correct = 0
+    for i in range(len(results)):
+        if results[i] == y_test[i]:
+            correct += 1
+    acc = correct/(len(results)+1)
     # ========================
 
     assert acc > 0.9, 'you should get an accuracy of at least 90% for the full ID3 decision tree'

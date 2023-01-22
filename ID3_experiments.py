@@ -36,7 +36,7 @@ def basic_experiment(x_train, y_train, x_test, y_test, formatted_print=False):
     for i in range(len(results)):
         if results[i] == y_test[i]:
             correct += 1
-    acc = correct/(len(results)+1)
+    acc = correct/(len(results))
     # ========================
 
     assert acc > 0.9, 'you should get an accuracy of at least 90% for the full ID3 decision tree'

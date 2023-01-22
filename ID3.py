@@ -35,7 +35,7 @@ class ID3:
         length = len(rows)
         for i in counts.keys():
             inParam = counts[i]/length
-            impurity-= inParam * math.log2(inParam)
+            impurity-= (inParam * math.log2(inParam))
         # ========================
         
 
@@ -133,7 +133,7 @@ class ID3:
                 newQ = Question(None, k, splitArr[i])
                 partitionAns = self.partition(rows,labels,newQ,current_uncertainty)
                 infoGain = partitionAns[0]
-                if infoGain > best_gain:
+                if infoGain >= best_gain:
                     best_gain = infoGain
                     best_question = newQ
                     best_false_rows = partitionAns[3]

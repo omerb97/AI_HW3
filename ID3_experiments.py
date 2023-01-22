@@ -29,7 +29,7 @@ def basic_experiment(x_train, y_train, x_test, y_test, formatted_print=False):
     acc = None
 
     # ====== YOUR CODE: ======
-    ourTree = ID3()
+    ourTree = ID3(["B","M"])
     ourTree.build_tree(x_train, y_train)
     results = ourTree.predict(x_test)
     correct = 0

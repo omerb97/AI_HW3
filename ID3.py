@@ -88,6 +88,10 @@ class ID3:
         assert len(rows) == len(labels), 'Rows size should be equal to labels size.'
 
         # ====== YOUR CODE: ======
+        true_rows = []
+        true_labels = []
+        false_labels = []
+        false_rows = []
         for idx, item in enumerate(rows):
             if question.match(item):
                 true_rows.append(item)
@@ -120,8 +124,8 @@ class ID3:
         for k in range(len(rows[0])):
             sortedArray = []
             currentUncertain = self.entropy(rows, labels)
-            for i in rows:
-                sortedArray.append(rows[i,k])
+            for i in range(len(rows)):
+                sortedArray.append(rows[i][k])
             sortedArray.sort()
             splitArr = []
             for i in range(len(sortedArray)-1):
@@ -158,8 +162,14 @@ class ID3:
         true_branch, false_branch = None, None
 
         # ====== YOUR CODE: ======
-        if np.logical_and(labels) == 1 or np.logical_or(labels) == 0:
-            pass
+        def CheckIfEqual(labels):
+            check = labels[0]
+            for item in labels:
+                if item != check:
+                    return False
+            return True
+        if CheckIfEqual(labels):
+            return Leaf(rows,labels)
             # Todo: return leaf or decision node
         temp = self.find_best_split(rows, labels)
         best_question = temp[1]

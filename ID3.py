@@ -169,7 +169,8 @@ class ID3:
             return True
         if CheckIfEqual(labels):
             return Leaf(rows,labels)
-            # Todo: return leaf or decision node
+        if len(rows) <= self.min_for_pruning:
+            return Leaf(rows,labels)
         temp = self.find_best_split(rows, labels)
         best_question = temp[1]
         true_branch = self.build_tree(temp[2], temp[3])
@@ -213,14 +214,17 @@ class ID3:
                 node = node.true_branch
             else:
                 node = node.false_branch
-        
         if type(node) is Leaf:
-            if "B" in node.predictions.keys():
-                if node.predictions["B"] > 0:
-                    prediction = "B"
-            if "M" in node.predictions.keys():
-                if node.predictions["M"] > 0:
+            if "B" in node.predictions.keys() and "M" in node.predictions.keys():
+                maxPred = max(node.predictions["M"],node.predictions["B"])
+                if maxPred == node.predictions["M"]:
                     prediction = "M"
+                if maxPred == node.predictions["B"]:
+                    prediction = "B"
+            elif "B" in node.predictions.keys():
+                prediction = "B"
+            elif "M" in node.predictions.keys():
+                prediction = "M"
         # ========================
 
         return prediction

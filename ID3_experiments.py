@@ -60,7 +60,14 @@ def best_m_test(x_train, y_train, x_test, y_test, min_for_pruning):
     acc = None
 
     # ====== YOUR CODE: ======
-    raise NotImplementedError
+    ourTree = ID3(["B","M"],min_for_pruning)
+    ourTree.fit(x_train, y_train)
+    results = ourTree.predict(x_test)
+    correct = 0
+    for i in range(len(results)):
+        if results[i] == y_test[i]:
+            correct += 1
+    acc = correct/(len(results))
     # ========================
 
     return acc
@@ -86,7 +93,8 @@ if __name__ == '__main__':
            modify the value from False to True to plot the experiment result
     """
     plot_graphs = True
-    best_m = cross_validation_experiment(plot_graph=plot_graphs)
+    #best_m = cross_validation_experiment(plot_graph=plot_graphs)
+    best_m = 50
     print(f'best_m = {best_m}')
 
     """

@@ -1,5 +1,6 @@
 from ID3 import ID3
 from utils import *
+from sklearn.model_selection import KFold
 
 """
 Make the imports of python packages needed
@@ -72,6 +73,37 @@ def best_m_test(x_train, y_train, x_test, y_test, min_for_pruning):
 
     return acc
 
+def cross_validation_experiment(x_train, y_train, x_test, y_test,):
+
+    mArr = [20,50,100,150,300]
+    results = []
+    kf = KFold(shuffle=True, n_splits=5, random_state=208548834)
+    kf.get_n_splits(x_train)
+    for m in mArr:
+        mAcc = 0
+        maxLen = 0
+        for i, (trainIndex, testIndex) in enumerate(kf.split(x_train)):
+            trainingSetY = []
+            trainingSetX = []
+            testSetY = []
+            testSetX = []
+            for x in trainIndex:
+                trainingSetX.append(x_train[x])
+                trainingSetY.append(y_train[x])
+            for x in testIndex:
+                testSetX.append(x_train[x])
+                testSetY.append(y_train[x])
+            mAcc += best_m_test(trainingSetX, trainingSetY, testSetX, testSetY, m)
+            if i > maxLen:
+                maxLen = i
+        mAcc = mAcc / 5
+        results.append(mAcc)
+    for i in range(len(results)):
+        results[i] = results[i] * 100
+    util_plot_graph(mArr, results, "M Values", "Accuracy (%)")
+    maxIdx = np.argmax(results)
+    return mArr[maxIdx]
+
 
 # ========================================================================
 if __name__ == '__main__':
@@ -93,8 +125,7 @@ if __name__ == '__main__':
            modify the value from False to True to plot the experiment result
     """
     plot_graphs = True
-    #best_m = cross_validation_experiment(plot_graph=plot_graphs)
-    best_m = 50
+    best_m = cross_validation_experiment(*data_split)
     print(f'best_m = {best_m}')
 
     """

@@ -125,7 +125,8 @@ if __name__ == '__main__':
            modify the value from False to True to plot the experiment result
     """
     plot_graphs = True
-    best_m = cross_validation_experiment(*data_split)
+    #best_m = cross_validation_experiment(*data_split)
+    best_m = 20
     print(f'best_m = {best_m}')
 
     """
